@@ -5,39 +5,56 @@ import 'package:flutter/widgets.dart';
 
 class NotificationBanner {
   final BuildContext context;
-  String _message;
   Widget _body;
   VoidCallback _onTapped;
+  double _padding = 80;
+  Duration _timeout = Duration(seconds: 3);
+  Duration _transitionDuration = Duration(milliseconds: 200);
+  double _shadowOpacity = 0.01;
+  bool _keepAlive = false;
 
   NotificationBanner(this.context);
 
-  NotificationBanner setMessage(String message) {
+  void setMessage(String message) {
     assert(message != null || message.isEmpty, 'Message can\'t be null or empty');
-    
     // we prioritize setting body over plain message
     if (_body != null)
-      return this;
-
-    _message = message;
-    _body = _getDefaultBody(_message);
-
-    return this;
+      return;
+    _body = _getDefaultBody(message);
   }
   
-  NotificationBanner setBody(Widget body) {
+  void setBody(Widget body) {
     assert(body != null, 'Body can\'t be null');
-
     _body = body;
-
-    return this;
+  }
+  
+  void setTapCallback(VoidCallback onTapped) {
+    assert(onTapped != null, 'Callback can\'t be null');
+    _onTapped = onTapped;
+  }
+  /// Padding between edge of screen and banner
+  void setPadding(double padding) {
+    assert(padding != null, 'Padding can\'t be null');
+    _padding = padding;
   }
 
-  NotificationBanner setTapCallback(VoidCallback onTapped) {
-    assert(onTapped != null, 'Callback can\'t be null');
+  void setTimeout(Duration timeout) {
+    assert(timeout != null, 'Timeout can\'t be null');
+    _timeout = timeout;
+  }
 
-    _onTapped = onTapped;
+  void setTransitionDuration(Duration transition) {
+    assert(transition != null, 'Transition can\'t be null');
+    _transitionDuration = transition;
+  }
 
-    return this;
+  void setShadowOpacity(double opacity) {
+    assert(opacity != null, 'Opacity can\'t be null');
+    _shadowOpacity = opacity;
+  }
+
+  void keepAlive() {
+    _keepAlive = true;
   }
   
   void show(Appearance appearance) {
@@ -46,17 +63,19 @@ class NotificationBanner {
     var halfOfHeight = MediaQuery.of(context).size.height * 0.5;
     bool hasBeenShown = false;
     showGeneralDialog(
-      barrierColor: Colors.black.withOpacity(0.01),
+      barrierColor: Colors.black.withOpacity(_shadowOpacity),
       transitionBuilder: (context2, a1, a2, widget) {
-        Future.delayed(Duration(seconds: 3), () {
-          if(!hasBeenShown) {
-            Navigator.pop(context2);
-          }
-          hasBeenShown = true;
-        });
+        if (!_keepAlive) {
+          Future.delayed(_timeout, () {
+            if(!hasBeenShown) {
+              Navigator.pop(context2);
+            }
+            hasBeenShown = true;
+          });
+        }
         Offset offset = appearance == Appearance.top
-          ? Offset(0, -halfOfHeight + 120 * a1.value)
-          : Offset(0, halfOfHeight - 120 * a1.value);
+          ? Offset(0, -halfOfHeight + _padding * a1.value)
+          : Offset(0, halfOfHeight - _padding * a1.value);
         return Transform.translate(
           offset: offset,
           child: Opacity(
@@ -80,7 +99,7 @@ class NotificationBanner {
           ),
         );
       },
-      transitionDuration: Duration(milliseconds: 200),
+      transitionDuration: _transitionDuration,
       barrierDismissible: true,
       barrierLabel: '',
       context: context,
@@ -96,7 +115,6 @@ class NotificationBanner {
       child: Text(
         message,
         style: TextStyle(
-          // fontFamily: 'Poppins',
           color: Color.fromRGBO(230, 91, 103, 1.0),
           fontSize: 16.0,
           fontWeight: FontWeight.bold,

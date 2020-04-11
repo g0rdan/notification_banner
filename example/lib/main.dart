@@ -48,15 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter(BuildContext context) {
-    NotificationBanner(context)
-      ..setMessage("test")
-      ..setPadding(70)
-      ..setTransitionDuration(Duration(milliseconds: 300))
-      ..setShadowOpacity(0.3)
-      ..setTapCallback(() {
-        print("tapped");
-      })
-      ..show(Appearance.top);
+    
     // setState(() {
     //   // This call to setState tells the Flutter framework that something has
     //   // changed in this State, which causes it to rerun the build method below
@@ -101,21 +93,40 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            MaterialButton(
+              child: Text('Default from top'),
+              onPressed: () {
+                NotificationBanner(context)
+                  ..setMessage('Default from top')
+                  ..show(Appearance.top);
+              }
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            MaterialButton(
+              child: Text('Default from bottom'),
+              onPressed: () {
+                NotificationBanner(context)
+                  ..setMessage('Default from bottom')
+                  ..show(Appearance.bottom);
+              }
+            ),
+            MaterialButton(
+              child: Text('Custom'),
+              onPressed: () {
+                NotificationBanner(context)
+                  ..setBody(Container(
+                      color: Colors.green,
+                      child: SizedBox(
+                        width: 150,
+                        height: 150,
+                      ),
+                    )
+                  )
+                  ..show(Appearance.top);
+              }
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _incrementCounter(context),
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

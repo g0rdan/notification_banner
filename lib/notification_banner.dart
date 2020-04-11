@@ -3,6 +3,8 @@ library notification_banner;
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'notification_alert.dart';
+
 class NotificationBanner {
   final BuildContext context;
   Widget _body;
@@ -80,11 +82,12 @@ class NotificationBanner {
           offset: offset,
           child: Opacity(
             opacity: a1.value,
-            child:  AlertDialog(
+            child: Padding(
+              padding: EdgeInsets.only(left:5, right: 5),
+              child: NotificationDialog(
                 shape: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
-                titlePadding: EdgeInsets.all(0),
                 backgroundColor: Color.fromRGBO(44, 52, 67, 1),
-                content: Container(
+                child: Container(
                   color: Colors.transparent,
                   child: GestureDetector(
                     onTap: () {
@@ -96,6 +99,8 @@ class NotificationBanner {
                   )
                 )
               ),
+            )
+             
           ),
         );
       },
@@ -111,15 +116,17 @@ class NotificationBanner {
   Widget _getDefaultBody(String message) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.9,
-      height: 28,
-      child: Text(
-        message,
-        style: TextStyle(
-          color: Color.fromRGBO(230, 91, 103, 1.0),
-          fontSize: 16.0,
-          fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Text(
+          message,
+          style: TextStyle(
+            color: Color.fromRGBO(230, 91, 103, 1.0),
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
+      )
     );
   }
 }

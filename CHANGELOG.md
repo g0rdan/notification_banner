@@ -4,5 +4,9 @@
 
 ## [0.0.2] - 10.04.2020
 
-* Adding "copy-paste" DialofWidget from Flutter repo
+* Adding "copy-paste" DialogWidget from Flutter repo
 * Refactoring
+
+## [0.0.3] - 19.04.2020
+
+* Fixing the problem with padding

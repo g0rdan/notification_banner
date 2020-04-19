@@ -1,15 +1,47 @@
-library notification_banner;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:notification_banner/notification_alert.dart';
 
-import 'notification_alert.dart';
+/// Body widget is needed for finding size of the body after rendering
+class BodyWidget extends StatefulWidget {
+  final Function(Size) onRendered;
+  final Widget body;
+
+  BodyWidget({
+    @required this.onRendered, 
+    @required this.body, 
+    Key key
+  }) : super(key: key);
+
+  @override
+  _BodyWidgetState createState() => _BodyWidgetState();
+}
+
+class _BodyWidgetState extends State<BodyWidget> {
+  
+  @override
+  void initState() { 
+    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+       child: widget.body
+    );
+  }
+
+  _afterLayout(_) {
+    var renderBox = this.context.findRenderObject() as RenderBox;
+    widget.onRendered(renderBox.size);
+  }
+}
 
 class NotificationBanner {
   final BuildContext context;
   Widget _body;
   VoidCallback _onTapped;
-  double _padding = 80;
+  double _padding = 40;
   Duration _timeout = Duration(seconds: 3);
   Duration _transitionDuration = Duration(milliseconds: 200);
   double _shadowOpacity = 0.01;
@@ -62,22 +94,23 @@ class NotificationBanner {
   void show(Appearance appearance) {
     assert(appearance != null, 'You need to clarify where the banner will appear');
 
-    var halfOfHeight = MediaQuery.of(context).size.height * 0.5;
+    Size _size = Size.zero;
+    var halfOfScreenHeight = MediaQuery.of(context).size.height * 0.5;
     bool hasBeenShown = false;
     showGeneralDialog(
       barrierColor: Colors.black.withOpacity(_shadowOpacity),
-      transitionBuilder: (context2, a1, a2, widget) {
+      transitionBuilder: (context, a1, a2, widget) {
         if (!_keepAlive) {
           Future.delayed(_timeout, () {
             if(!hasBeenShown) {
-              Navigator.pop(context2);
+              Navigator.pop(context);
             }
             hasBeenShown = true;
           });
         }
         Offset offset = appearance == Appearance.top
-          ? Offset(0, -halfOfHeight + _padding * a1.value)
-          : Offset(0, halfOfHeight - _padding * a1.value);
+          ? Offset(0, -halfOfScreenHeight + (_size != Size.zero ? _size.height / 2 : 0) + _padding * a1.value)
+          : Offset(0, halfOfScreenHeight - (_size != Size.zero ? _size.height / 2 : 0) - _padding * a1.value);
         return Transform.translate(
           offset: offset,
           child: Opacity(
@@ -95,12 +128,16 @@ class NotificationBanner {
                         _onTapped();
                       }
                     },
-                    child: _body
+                    child: BodyWidget(
+                      body: _body,
+                      onRendered: (size) {
+                        _size = size;
+                      },
+                    )
                   )
                 )
               ),
             )
-             
           ),
         );
       },
@@ -109,6 +146,7 @@ class NotificationBanner {
       barrierLabel: '',
       context: context,
       pageBuilder: (context3, animation1, animation2) {
+        return null;
       }
     );
   }

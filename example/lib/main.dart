@@ -55,7 +55,38 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             ),
             MaterialButton(
-              child: Text('Custom'),
+              child: Text('Changed background color'),
+              onPressed: () {
+                NotificationBanner(context)
+                  ..setMessage('Different color')
+                  ..setBgColor(Colors.brown)
+                  ..show(Appearance.top);
+              }
+            ),
+            MaterialButton(
+              child: Text('Changed text style'),
+              onPressed: () {
+                NotificationBanner(context)
+                  ..setMessage('Changed text style')
+                  ..setTextStyle(TextStyle(
+                    color: Colors.purple,
+                    fontSize: 20.0,
+                    fontStyle: FontStyle.italic
+                  ))
+                  ..show(Appearance.top);
+              }
+            ),
+            MaterialButton(
+              child: Text('Changed border radius'),
+              onPressed: () {
+                NotificationBanner(context)
+                  ..setMessage('Changed border radius')
+                  ..setBorderRadius(16.0)
+                  ..show(Appearance.top);
+              }
+            ),
+            MaterialButton(
+              child: Text('Custom body'),
               onPressed: () {
                 NotificationBanner(context)
                   ..setBody(Container(
@@ -75,5 +106,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-

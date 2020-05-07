@@ -1,7 +1,7 @@
 name: notification_banner
 description: The package provides simple and customizable way to show notification banner.
-version: 0.0.3
-homepage: http://g0rdan.com
+version: 0.1.0
+homepage: https://github.com/g0rdan/notification_banner
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

@@ -37,6 +37,7 @@ class _BodyWidgetState extends State<BodyWidget> {
   }
 }
 
+enum Appearance { top, bottom }
 class NotificationBanner {
   final BuildContext context;
   Widget _body;
@@ -46,15 +47,16 @@ class NotificationBanner {
   Duration _transitionDuration = Duration(milliseconds: 200);
   double _shadowOpacity = 0.01;
   bool _keepAlive = false;
+  Color _bgColor = Color.fromRGBO(44, 52, 67, 1);
+  String _message;
+  TextStyle _textStyle;
+  double _borderRadius = 6.0;
 
   NotificationBanner(this.context);
 
   void setMessage(String message) {
-    assert(message != null || message.isEmpty, 'Message can\'t be null or empty');
-    // we prioritize setting body over plain message
-    if (_body != null)
-      return;
-    _body = _getDefaultBody(message);
+    assert(message.isNotEmpty, 'Message can\'t be null or empty');
+    _message = message;
   }
   
   void setBody(Widget body) {
@@ -85,6 +87,21 @@ class NotificationBanner {
   void setShadowOpacity(double opacity) {
     assert(opacity != null, 'Opacity can\'t be null');
     _shadowOpacity = opacity;
+  }
+
+  void setBgColor(Color color) {
+    assert(color != null, 'Color can\'t be null');
+    _bgColor = color;
+  }
+
+  void setTextStyle(TextStyle textStyle) {
+    assert(textStyle != null, 'TextStyle can\'t be null');
+    _textStyle = textStyle;
+  }
+
+  void setBorderRadius(double radius) {
+    assert(radius != null, 'Radius can\'t be null');
+    _borderRadius = radius;
   }
 
   void keepAlive() {
@@ -118,8 +135,8 @@ class NotificationBanner {
             child: Padding(
               padding: EdgeInsets.only(left:5, right: 5),
               child: NotificationDialog(
-                shape: OutlineInputBorder(borderRadius: BorderRadius.circular(6.0)),
-                backgroundColor: Color.fromRGBO(44, 52, 67, 1),
+                shape: OutlineInputBorder(borderRadius: BorderRadius.circular(_borderRadius)),
+                backgroundColor: _bgColor,
                 child: Container(
                   color: Colors.transparent,
                   child: GestureDetector(
@@ -129,7 +146,25 @@ class NotificationBanner {
                       }
                     },
                     child: BodyWidget(
-                      body: _body,
+                      body: _body != null
+                        ? _body
+                        // default body for the notification
+                        : SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              _message,
+                              style: _textStyle != null 
+                                ? _textStyle 
+                                : TextStyle(
+                                  color: Color.fromRGBO(230, 91, 103, 1.0),
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            ),
+                          )
+                        ),
                       onRendered: (size) {
                         _size = size;
                       },
@@ -150,23 +185,4 @@ class NotificationBanner {
       }
     );
   }
-
-  Widget _getDefaultBody(String message) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text(
-          message,
-          style: TextStyle(
-            color: Color.fromRGBO(230, 91, 103, 1.0),
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      )
-    );
-  }
 }
-
-enum Appearance { top, bottom }

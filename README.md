@@ -1,14 +1,7 @@
 # notification_banner
 
-A new Flutter package project.
+notification_banner displays a banner on the screen.  
+This is useful for displaying notices and warnings.  
+You can set a callback when the banner is tapped.  
 
-## Getting Started
-
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+![](docs/demonstration.gif)

@@ -147,6 +147,7 @@ class NotificationBanner {
                           color: Colors.transparent,
                           child: GestureDetector(
                               onTap: () {
+                                hasBeenShown = true;
                                 if (_onTapped != null) {
                                   _onTapped();
                                 }
